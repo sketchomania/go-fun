@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"path"
 )
 
 func loadFile(fileName string) (string, error) {
@@ -15,20 +16,21 @@ func loadFile(fileName string) (string, error) {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	var index, err = loadFile("index2.html")
+	// fmt.Printf("%v", r.URL)
+	// fmt.Printf("%v", path.Base(r.URL.EscapedPath()))
+	var index, err = loadFile(path.Base(r.URL.EscapedPath()))
 	if err != nil {
 		w.WriteHeader(404)
 		fmt.Fprint(w, "404: Oops! Couldn't find the page you are looking for...")
 	}
 	fmt.Fprint(w, index)
-	// fmt.Fprintf(w, "Hello %s, welcome to your HTTP server🚀🚀.", r.URL.Path[1:])
 }
 
 func main() {
-	fmt.Println("HTTP Server")
 	http.HandleFunc("/", handler)
 	http.ListenAndServe(":9000", nil)
 }
 
 // http://localhost:9000
-// http://localhost:9000/text
+// http://localhost:9000/index.html
+// http://localhost:9000/ere/todo/index.html
