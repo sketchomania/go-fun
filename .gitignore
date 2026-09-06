@@ -1,0 +1,13 @@
+# Go build and test output
+*.exe
+*.test
+*.out
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Generated converter output
+converter-md/test.html
+converter-pfd/generated.pdf

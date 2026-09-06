@@ -1,38 +1,9 @@
-// package main
-
-// import (
-// 	"fmt"
-
-// 	"github.com/beego/beego/v2/client/orm"
-// 	_ "github.com/go-sql-driver/mysql"
-// )
-
-// func init() {
-// 	orm.RegisterDriver("mysql", orm.DRMySQL)
-
-// 	orm.RegisterDataBase("default", "mysql", "root:root@/orm_test?charset=utf8")
-// }
-
-// func main() {
-
-// 	// Using default, you can use other database
-// 	o := orm.NewOrm()
-
-// 	profile := new(Profile)
-// 	profile.Age = 30
-
-// 	user := new(User)
-// 	user.Profile = profile
-// 	user.Name = "slene"
-
-// 	fmt.Println(o.Insert(profile))
-// 	fmt.Println(o.Insert(user))
-// }
-
 package main
 
 import (
 	"fmt"
+	"log"
+	"os"
 
 	"github.com/beego/beego/v2/client/orm"
 	_ "github.com/go-sql-driver/mysql"
@@ -47,12 +18,17 @@ type User struct {
 func init() {
 	// register model
 	orm.RegisterModel(new(User))
-
-	// set default database
-	orm.RegisterDataBase("default", "mysql", "root:my-secret-pw@/my_db?charset=utf8")
 }
 
 func main() {
+	dsn := os.Getenv("MYSQL_DSN")
+	if dsn == "" {
+		log.Fatal("MYSQL_DSN must be set")
+	}
+	if err := orm.RegisterDataBase("default", "mysql", dsn); err != nil {
+		log.Fatal(err)
+	}
+
 	o := orm.NewOrm()
 
 	user := User{Name: "Selena", Id: 0}

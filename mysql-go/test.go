@@ -3,11 +3,10 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 )
-
-const dbName = "go_demo"
 
 type Product struct {
 	Id    int
@@ -88,14 +87,15 @@ func deleteHandler(myDB *sql.DB, itemId int) {
 }
 
 func connectDB() (db *sql.DB) {
-	dbDriver := "mysql"
-	dbUser := "root"
-	dbPass := "my-secret-pw"
-	dbName := "go_demo"
-	myDB, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
+	dsn := os.Getenv("MYSQL_DSN")
+	if dsn == "" {
+		panic("MYSQL_DSN must be set")
+	}
+
+	myDB, err := sql.Open("mysql", dsn)
 	handleError(err)
+	handleError(myDB.Ping())
 	fmt.Println("MYSQL connection success")
-	// defer myDB.Close()
 	return myDB
 }
 
